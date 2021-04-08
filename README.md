@@ -14,19 +14,19 @@ Bash Scripting (Session - 2)
 
 Python (Session - 2 & 3)
 
-Terraform (Session - 7)
+Terraform (Session - 4)
 
-Docker (Session - 4,5)
+Docker (Session - 5,6)
 
 Kubernetes only Intro and basics (Session - 6)
 
-Ansible (Session - 8 & 9)
+Ansible (Session - 7 & 8)
 
-Jenkins (Session - 10,11,12)
+Jenkins (Session - 9,10,11)
 
-Sonarqube (Session - 12
+Sonarqube (Session - 11)
 
-Bit Bucket (Session - 12)
+Bit Bucket (Session - 11)
 
 Projects
 ==========
