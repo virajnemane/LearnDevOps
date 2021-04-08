@@ -67,10 +67,14 @@ Ansible (Session - 8 & 9)
 Jenkins (Session - 10,11,12)
 1) Intro, overview, why it is
 2) Installation 
-3) Application Deployment through Freestyle CI/CD
-4) Application Deployment through Pipeline CI/CD
-5) User / Role management
-6) Distributed Architecture (Master/Slave)
+3) Application Deployment through Pipeline CI/CD
+4) User / Role management
+5) Distributed Architecture (Master/Slave)
+
+Sonarqube (Session - 12)
+1) Installation of Sonarqube
+2) why sonarqube
+3) Integration of sonarqube with Jenkins
 
 Bit Bucket (Session - 12)
 1) Intro, overview, why it is
