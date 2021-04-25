@@ -1,0 +1,54 @@
+1)print list of existing local user's and their homedirectory on console in following format (use awk with /etc/passwd file)
+user1 - /home/user1
+user2 - /home/user2
+
+awk -F ":" '{print $1,"-",$6}' /etc/passwd
+
+--------------------------------------------------------------------------------
+
+2) Create file data.txt with below line. You need to replace "Nilesh" with your name in single command without opening file. (use sed)
+This is Nilesh and I am mad.
+
+sed -i 's/Nilesh/Viraj/' data.txt
+
+---------------------------------------------------------------------------------
+
+3) Create bash script to Fetch list of uniq ip's with total number of request from that ip from access.log file. (hint - awk, wc, sort, uniq)
+i.e.
+83.149.9.216 - 23
+
+cat access.log | awk '{print $1}' | sort -n | uniq -c | sort -nr | awk '{print $2,"-",$1}'
+
+--------------------------------------------------------------------------------------
+
+
+4) create bash script which will ping each website mentioned in website.txt and get it's ipv4/ipv6 and create website-detail.txt with website and it's ip address in below format. (hint - use for loop, ping website, use awk to get ip)
+google.com [2404:6800:4009:80a::200e]
+
+for each in `cat website.txt`;do ping $each -c 1 | head -1 | awk '{print $2,$3}'; done > website-detail.txt
+
+Output
+root@DESKTOP-SC2EFJ3:/home/viraj# cat website-detail.txt
+google.com (172.217.160.174)
+yahoo.com (98.137.246.7)
+rediff.com (23.38.25.38)
+amazon.com (176.32.103.205)
+irctc.co.in (103.252.142.19)
+twitter.com (104.244.42.65)
+makemytrip.com (115.114.54.50)
+
+
+-------------------------------------------------------------------------------------------------
+
+5) Write a bash script which will check /tmp/test directory exist or not, if directory not exist then it will create directory. (Hint - read question again)
+
+#!/bin/bash
+dir=/tmp/test
+if [ -d $dir ];
+then
+echo "Directory /tmp/test exist";
+else
+mkdir "/tmp/test";
+fi
+
+
