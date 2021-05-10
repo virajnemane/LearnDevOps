@@ -1,0 +1,26 @@
+In python application deployment, each application create it's own virtual environment,
+to isolate its package bundle from actual python package installed on system.
+
+It gives flexibility to developer to install and use any package of any version for his application development.
+
+Also it helps to keep python installation done with OS as it is. 
+
+In process of virtual environment creation, it just create copy of python installer at given path.
+
+
+Login with root user
+    a) install python3 if not installed already
+    yum install python3 -y
+
+    b) install virtualenv python module
+    pip3 install virtualenv
+
+Login with application user
+    a) create virtual environment
+    virtualenv <name_of_virtual_env>
+
+    b) activate virtual environment
+    source <name_of_virtual_env>/bin/activate
+
+    c) install flask python module
+    pip3 install flask

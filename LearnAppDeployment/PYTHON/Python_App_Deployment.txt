@@ -1,0 +1,35 @@
+1) spin ec2 instance with amazon ami-2 image
+
+Below steps need to be done by root user.
+
+2) Login with root user and create application user as "bata" and set its password
+useradd bata
+passwd bata
+
+3) Login with root user and create required directory structure for the application.
+mkdir /opt/bata
+chown bata:bata /opt/bata
+
+4) Login with root user and install git package
+yum install git python3 -y
+pip3 install virtualenv
+
+Below steps need to be done by bata user, which is our application user.
+
+5) Create requied directory structure for the application
+cd /opt/bata
+mkdir bin conf build software logs
+
+6) trigger build for application
+cd /opt/bata/build
+git clone https://github.com/tciaindiadevops/myecho.git -b v3-standalone
+./build.sh -E DEV
+
+7) start application
+nohup start.sh > start.out &
+
+8) Open application in browser, http://<public-ip>:5000
+Note - You need to open 5000 port in security group.
+
+Note - In this application deployment everything is automated with build.sh script.
+It will be good if you study build.sh script to understand build process.
