@@ -1,0 +1,58 @@
+Providers
+----------
+Providers connect Terraform to the infrastructure you want to manage.
+They provide configuration like connection details and authentication
+credentials. 
+You can specify multiple providers in a Terraform configuration to manage resources from multiple services or from multiple regions or parts of a service.
+
+obejct or
+component  name
+    |       |
+provider "aws" {
+  access_key = "ACCESS_KEY_HERE"
+  secret_key = "SECRET_KEY_HERE"
+  region     = "us-east-2"
+}
+
+For more info - https://www.terraform.io/docs/providers/index.html
+
+Resources
+----------
+Resources are the bread and butter of Terraform.
+They represent the infrastructure components you want to manage, i.e. hosts, network DNS entry etc...
+The resource object is constructed of a type, name, and a block containing the configuration of the resource.
+Resource type is combination of provider name and resource type like "aws_instance", this is how each resource is linked with provider.
+The name of the resource is specified next. The name of the resource should generally describe what the resource is or does.
+The combination of type and name must be unique in your configuration.
+
+component provider type   name
+  |         |       |       |
+resource "aws_instance" "test1" {
+  ami           = "ami-083ebc5a49573896a"
+  instance_type = "t2.micro"
+}
+
+state file (terraform.tfstate)
+-------------------------------
+Terraform save current state of infrastructure into a file called state file. 
+If you delete the file Terraform will not know what resources you are managing, and it will attempt to apply all configuration from scratch.
+Terraform also creates a backup file of our state from the most recent previous execution in a file called terraform.tfstate.backup.
+This state file have everything, even a secret data which we want to hide, so do not put this file in version control.
+If you make a change to your infrastructure manually, or if you use another tool, it can be easy for this state to get out of sync with reality
+
+interpolation
+--------------
+You can refer property of one resource while creating another resource.
+syntax - resourcetype.resourcename.resourceproperty
+i.e. aws_instance.test1.id
+in above example "aws_instance" is  resource type, test1 is resource name and id is one of the property of instance resource.
+
+Validating and formatting
+--------------------------
+terraform validate
+terraform fmt
+
+before running terraform plan command you can run above commands.
+The validate command checks the syntax and validates your Terraform configuration files and returns any errors.
+The fmt command neatly formats your configuration files.
+
