@@ -1,0 +1,397 @@
+---
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "VPC Creation with four Public subnet"
+        Parameters:
+          - VPCNAME
+          - VPCCIDR
+          - DEVSUBCIDR
+          - QASUBCIDR
+          - DRSUBCIDR
+          - PRODSUBCIDR
+Parameters:
+  VPCNAME:
+    Description: "Enter your VPC name"
+    Type: String
+  VPCCIDR:
+    Description: "Enter VPC CIDR"
+    Type: String
+  DEVSUBCIDR:
+    Description: "Enter CIDR for public subnet for DEV env"
+    Type: String
+  QASUBCIDR:
+    Description: "Enter CIDR for public subnet for QA env"
+    Type: String
+  DRSUBCIDR:
+    Description: "Enter CIDR for public subnet for DR env"
+    Type: String
+  PRODSUBCIDR:
+    Description: "Enter CIDR for public subnet for PROD env"
+    Type: String        
+  
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Ref "VPCCIDR"
+      EnableDnsHostnames: "True"
+      EnableDnsSupport: "True"
+      Tags: 
+        - Key: "Name"
+          Value: !Ref "VPCNAME"
+  IG:
+    Type: AWS::EC2::InternetGateway
+    Properties: 
+      Tags: 
+        - Key: "Name"
+          Value: !Join [ "-", [ !Ref "VPCNAME", IG ] ]
+  IGAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties: 
+      InternetGatewayId: !Ref "IG"
+      VpcId: !Ref "VPC"
+  DEVSUB:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      CidrBlock: !Ref "DEVSUBCIDR"
+      MapPublicIpOnLaunch: "True"
+      Tags: 
+        - Key: "Name"
+          Value: "DEVSUB"
+      VpcId: !Ref "VPC"
+  DEVRT:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      Tags: 
+        - Key: "Name"
+          Value: "DEVRT"
+      VpcId: !Ref "VPC"
+  DEVSubRTassoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref DEVRT
+      SubnetId: !Ref DEVSUB
+  DEVDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: "IGAttach"
+    Properties: 
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref "IG"
+      RouteTableId: !Ref "DEVRT"
+  DEVSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: "SG for DEV Public Subnet"
+      GroupName: "DEVSG"
+      SecurityGroupIngress: 
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow ssh to all"
+          FromPort: 22
+          IpProtocol: "tcp"
+          ToPort: 22
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 80
+          IpProtocol: "tcp"
+          ToPort: 80
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 8080
+          IpProtocol: "tcp"
+          ToPort: 8080
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 5000
+          IpProtocol: "tcp"
+          ToPort: 5000          
+      Tags: 
+        - Key: "Name"
+          Value: "DEVSG"
+      VpcId: !Ref "VPC"
+
+  QASUB:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      CidrBlock: !Ref "QASUBCIDR"
+      MapPublicIpOnLaunch: "True"
+      Tags: 
+        - Key: "Name"
+          Value: "QASUB"
+      VpcId: !Ref "VPC"
+  QART:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      Tags: 
+        - Key: "Name"
+          Value: "QART"
+      VpcId: !Ref "VPC"
+  QASubRTassoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref QART
+      SubnetId: !Ref QASUB
+  QADefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: "IGAttach"
+    Properties: 
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref "IG"
+      RouteTableId: !Ref "QART"
+  QASG:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: "SG for QA Public Subnet"
+      GroupName: "QASG"
+      SecurityGroupIngress: 
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow ssh to all"
+          FromPort: 22
+          IpProtocol: "tcp"
+          ToPort: 22
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 80
+          IpProtocol: "tcp"
+          ToPort: 80
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 8080
+          IpProtocol: "tcp"
+          ToPort: 8080
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 5000
+          IpProtocol: "tcp"
+          ToPort: 5000          
+      Tags: 
+        - Key: "Name"
+          Value: "QASG"
+      VpcId: !Ref "VPC"
+
+  DRSUB:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      CidrBlock: !Ref "DRSUBCIDR"
+      MapPublicIpOnLaunch: "True"
+      Tags: 
+        - Key: "Name"
+          Value: "DRSUB"
+      VpcId: !Ref "VPC"
+  DRRT:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      Tags: 
+        - Key: "Name"
+          Value: "DRRT"
+      VpcId: !Ref "VPC"
+  DRSubRTassoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref DRRT
+      SubnetId: !Ref DRSUB
+  DRDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: "IGAttach"
+    Properties: 
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref "IG"
+      RouteTableId: !Ref "DRRT"
+  DRSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: "SG for DR Public Subnet"
+      GroupName: "DRSG"
+      SecurityGroupIngress: 
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow ssh to all"
+          FromPort: 22
+          IpProtocol: "tcp"
+          ToPort: 22
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 80
+          IpProtocol: "tcp"
+          ToPort: 80
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 8080
+          IpProtocol: "tcp"
+          ToPort: 8080
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 5000
+          IpProtocol: "tcp"
+          ToPort: 5000          
+      Tags: 
+        - Key: "Name"
+          Value: "DRSG"
+      VpcId: !Ref "VPC"
+
+  PRODSUB:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      CidrBlock: !Ref "PRODSUBCIDR"
+      MapPublicIpOnLaunch: "True"
+      Tags: 
+        - Key: "Name"
+          Value: "PRODSUB"
+      VpcId: !Ref "VPC"
+  PRODRT:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      Tags: 
+        - Key: "Name"
+          Value: "PRODRT"
+      VpcId: !Ref "VPC"
+  PRODSubRTassoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PRODRT
+      SubnetId: !Ref PRODSUB
+  PRODDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: "IGAttach"
+    Properties: 
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref "IG"
+      RouteTableId: !Ref "PRODRT"
+  PRODSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: "SG for PROD Public Subnet"
+      GroupName: "PRODSG"
+      SecurityGroupIngress: 
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow ssh to all"
+          FromPort: 22
+          IpProtocol: "tcp"
+          ToPort: 22
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 80
+          IpProtocol: "tcp"
+          ToPort: 80
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 8080
+          IpProtocol: "tcp"
+          ToPort: 8080
+        - CidrIp: "0.0.0.0/0"
+          Description: "Allow http to all"
+          FromPort: 5000
+          IpProtocol: "tcp"
+          ToPort: 5000          
+      Tags: 
+        - Key: "Name"
+          Value: "PRODSG"
+      VpcId: !Ref "VPC"
+      
+  DEVSGIngressToQA:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref DEVSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt QASG.GroupId
+
+  DEVSGIngressToDR:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref DEVSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt DRSG.GroupId
+
+  DEVSGIngressToPROD:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref DEVSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt PRODSG.GroupId
+
+  QASGIngressToDEV:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref QASG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt DEVSG.GroupId      
+
+  QASGIngressToDR:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref QASG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt DRSG.GroupId        
+      
+  QASGIngressToPROD:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref QASG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt PRODSG.GroupId
+      
+  DRSGIngressToDEV:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref DRSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt DEVSG.GroupId      
+
+  DRSGIngressToQA:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref DRSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt QASG.GroupId        
+      
+  DRSGIngressToPROD:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref DRSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt PRODSG.GroupId      
+      
+  PRODSGIngressToDEV:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref PRODSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt DEVSG.GroupId      
+
+  PRODSGIngressToQA:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref PRODSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt QASG.GroupId        
+      
+  PRODSGIngressToDR:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref PRODSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt DRSG.GroupId
