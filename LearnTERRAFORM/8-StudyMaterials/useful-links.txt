@@ -1,0 +1,4 @@
+Terraform document - https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+Terraform variables - https://www.terraform.io/docs/language/values/variables.html
+Terraform variable types - https://www.terraform.io/docs/language/expressions/type-constraints.html
+Terraform functions - https://www.terraform.io/docs/language/functions/index.html
