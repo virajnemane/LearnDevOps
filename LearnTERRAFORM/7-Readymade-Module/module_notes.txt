@@ -1,0 +1,23 @@
+Terraform have modules from which we can create resources just by passing required variables.
+
+Modules is nothing but a generic code which used frequently to create resources.
+
+Module list available with Terraform for aws https://registry.terraform.io/modules/terraform-aws-module
+
+Below steps will help to create VPC through module.
+
+1) download module from git
+git clone https://github.com/terraform-aws-modules/terraform-aws-vpc.git
+
+2) create provider.tf if not created
+
+3) create vpc.tf
+
+4) do initilization 
+terraform init
+
+5) check terraform plan 
+terraform plan
+
+6) if everything seems good in plan and then apply it.
+terraform apply
