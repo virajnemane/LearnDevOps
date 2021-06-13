@@ -1,0 +1,32 @@
+namespace
+---------
+PID
+MOUNT
+NET
+IPC - Inter process communicaton
+UTS - Unix Time Sharing
+
+Control Groups
+--------------
+OS feature used by container, control how much cpu, memory get used by specific process.
+
+Selinux - (Security Enhance Linux)
+-----------------------------------
+OS feature used by container,
+
+user:role:target:severity
+
+SECOMP
+-------
+secomp doesn't allow container to take control of hardware of base system.
+
+
+When we start docker service
+----------------------------
+create lan - ifconfig
+
+create bridge - brctl show
+
+create partition - df -h or mount command
+
+start deamon process - ps aux |grep docker
