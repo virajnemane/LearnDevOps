@@ -1,0 +1,20 @@
+#Create repository on ECR
+
+#Spin ec2 instance and assign admin role
+
+#Define docker registry
+export DOCKER_REGISTRY=059580869719.dkr.ecr.us-east-2.amazonaws.com/myecho
+
+#Login to repository
+execute aws configure and configure region
+PASS=`aws ecr get-login-password`
+docker login -u AWS -p $PASS $DOCKER_REGISTRY
+
+#clone application code and build image
+git clone https://github.com/indorenilesh/myecho.git
+cd myecho 
+docker image build -t myecho .
+
+#tag and push
+docker tag myecho  $DOCKER_REGISTRY:latest
+docker image push $DOCKER_REGISTRY:latest
