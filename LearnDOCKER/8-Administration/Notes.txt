@@ -1,0 +1,38 @@
+#information about installed docker
+docker info
+docker -D info	----> debug mode for more information
+
+#View running containers
+docker ps
+
+#View all containers
+docker ps -a
+
+#View total file size
+docker ps -s
+
+#View container which contain specific name.
+docker ps --filter "name=calcIndex"		----> will show all container which have calcIndex in its name.
+
+#View container which have specific volume mounted
+docker ps --filter volume=/data		---> will show volume mounted on /data
+
+#Inspect will help to get more info related to specific service
+docker network inspect <network-name>
+docker volume inspect <volume-name>
+
+#Copy data from host to container
+docker cp <local-data-path> <container-name>:<container-data-path>
+
+#docker disk usage
+docker system df
+
+#real time event logs
+docker system events
+
+#Do cleanup
+docker system prune
+
+#recover docker image from running container
+docker commit <container_name>  -----> image without tag will get created
+docker commit <container_name> <tagname>    -----> image with tag name will get created
