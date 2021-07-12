@@ -1,0 +1,54 @@
+play with k8s
+----------------
+#Run on master server
+kubeadm init --apiserver-advertise-address $(hostname -i)
+
+#Run this on node server
+kubeadm join 192.168.0.8:6443 --token yy0uus.7fosr6of2tdgawcd --discovery-token-ca-cert-hash sha256:2b27f7c0d376da4fb10c8bef05cc8ad0ad2a9fb8b999587bd55f646b40ccd378
+
+#Run this on master server
+kubectl apply -n kube-system -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 |tr -d '\n')"
+
+#Deploy nginx
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/application/nginx-app.yaml
+or
+#Create a deployment called "my-nginx" with the nginx web server image.
+kubectl create deployment --image nginxdemos/hello my-nginx
+
+kubectl get deploy
+or
+kubectl get deploy -o wide
+or
+kubectl get deployment
+
+kubectl describe deploy my-nginx
+
+#Scale up the deployment
+kubectl get pod
+kubectl scale deployment --replicas 20 my-nginx
+kubectl get pod
+
+#Scale down the deployment
+kubectl get pod
+kubectl scale deployment --replicas 5 my-nginx
+kubectl get pod
+
+#check services
+kubectl get services
+
+#Get deployment conf in yml format
+kubectl get deploy my-nginx -o=yaml
+
+#list replication controller
+kubectl get rc
+or
+kubectl get replicationcontroller
+
+#show multiple things in single command
+kubectl get pod,node -o wide
+
+#check particular pod
+kubectl get pod/<podname/id>
+
+#delete deployment
+kubectl delete deployment my-nginx
