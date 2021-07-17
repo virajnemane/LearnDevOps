@@ -1,0 +1,20 @@
+I am assuming "docker desktop" is already installed. 
+
+#Check to see if virtualization is supported
+systeminfo
+	Virtualization Enabled In Firmware: Yes	-----> this should be Yes
+
+#Install virtualbox 
+choco install virtualbox
+
+#Install minikube
+choco install minikube
+
+#Start minikube
+minikube start
+
+Note - If choco is not installed in your system then check chocloatey.org for choco
+
+After this might be docker ps command wont work properly. If it doesn't work then follow below 2 commands
+
+minikube docker-env		----> this command will create env, but still execute for loop given in last line in this output.
