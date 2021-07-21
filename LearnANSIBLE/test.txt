@@ -1,0 +1,27 @@
+# root user on both server
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.org
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+service sshd restart
+pass=$(perl -e 'print crypt($ARGV[0], "password")' ansible)
+useradd -m -p "$pass" "ansible"
+
+# root user on ansible server
+yum install httpd -y
+mkdir /home/ansible/files
+cp /etc/httpd/conf/httpd.conf /home/ansible/files/
+chown ansible:ansible /home/ansible/files/ -R
+
+# ansible user on application server
+ssh-keygen -t rsa
+
+# ansible user on ansible server
+ssh-keygen -t rsa
+ssh-copy-id <APP_SRV_IP>
+ssh <APP_SRV_IP>
+wget https://mirrors.estointernet.in/apache/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.zip
+wget https://downloads.apache.org/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz
+
+
+
+
+sed -i 's/\/var\/www\/html/{{ DOCUMENTROOT }}/g' httpd.conf.j2
