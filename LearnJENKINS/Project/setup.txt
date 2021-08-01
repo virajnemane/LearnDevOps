@@ -1,0 +1,30 @@
+#Create vpc in respective region
+#do vpc peering
+#allow respective range in RT
+#allow respective trffic/ports in SG i.e. for ping open IMCP protocol
+
+
+
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Action": [
+      "ec2:StartInstances",
+      "ec2:StopInstances"
+    ],
+    "Resource": "arn:aws:iam::753630555181:role/EC2ACCESSTOSUPPORT"
+  }
+}
+
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "*",
+            "Resource": "*"
+        }
+    ]
+}

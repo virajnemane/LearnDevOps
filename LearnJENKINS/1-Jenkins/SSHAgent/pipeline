@@ -1,0 +1,33 @@
+pipeline {
+    
+    agent any
+    
+    parameters { 
+      string(name: 'IP', defaultValue: '', description: 'Application server ip') 
+      }
+      
+    stages {
+        
+        stage('checkout') {
+            steps{
+            git 'https://github.com/tciaindiadevops/form.git'
+            }
+        }    
+        stage('build') {
+            steps {
+            withMaven(maven: 'maven') {
+            sh 'mvn clean install'
+              }
+            }
+        }   
+        
+        stage('deploy') {
+          steps {
+              sshagent(credentials: ['app1']) {
+            sh 'scp $WORKSPACE/target/basicform.war $IP:/local/apps/tomcat/webapps/'
+            }
+          }
+        }
+    }
+    
+}
