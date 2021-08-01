@@ -1,0 +1,6 @@
+1) Create private repo on git where your code will get saved for below project.
+2) Create a jenkins pipeline to spin ec2.
+	1) Jenkins job should ask ENV parameter
+	2) ENV would be DEV,QA,DR or PROD (Each env have different subnet and different vpc)
+	3) As per ENV ec2 instance should spin in that environment only
+	
