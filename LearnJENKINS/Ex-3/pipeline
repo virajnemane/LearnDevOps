@@ -1,0 +1,33 @@
+pipeline {
+    
+    agent { label 'LOWERENV' }
+    
+    parameters { 
+      string(name: 'IP', defaultValue: '', description: 'Application server ip') 
+      }
+      
+    stages {
+        
+        stage('checkout') {
+            steps{
+            git 'https://github.com/tciaindiadevops/basicform.git'
+            }
+        }    
+        stage('build') {
+            steps {
+            withMaven(maven: 'MyMaven') {
+            sh 'mvn clean install'
+              }
+            }
+        }   
+        
+        stage('deploy') {
+          steps {
+              sshagent(credentials: ['bform']) {
+            sh 'scp -o StrictHostKeyChecking=no $WORKSPACE/target/basicform.war bform@$IP:/local/apps/bform/tomcat/webapps/'
+            }
+          }
+        }
+    }
+    
+}
