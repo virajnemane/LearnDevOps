@@ -5,21 +5,13 @@ cp /etc/ssh/sshd_config /etc/ssh/sshd_config.org
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 service sshd restart
 
-#Install git
-yum install git -y
+#Install git and java
+yum install git java -y
 
 #Install jdk
-cd /tmp
-wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u141-b15/336fa29ff2bb4ef291e347e091f7f4a7/jdk-8u141-linux-x64.rpm
-rpm -ivh jdk-8u141-linux-x64.rpm
-
-#Install maven
-cd /tmp
-wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip
-unzip apache-maven-3.6.3-bin.zip
-mkdir /local/apps/maven -p
-cd apache-maven-3.6.3
-mv * /local/apps/maven/
+#cd /tmp
+#wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u141-b15/336fa29ff2bb4ef291e347e091f7f4a7/jdk-8u141-linux-x64.rpm
+#rpm -ivh jdk-8u141-linux-x64.rpm
 
 #Create Jenkins user
 pass=$(perl -e 'print crypt($ARGV[0], "password")' jenkins)
@@ -36,10 +28,10 @@ cp /etc/sudoers /etc/sudoers.org
 echo "jenkins    ALL=(ALL)       NOPASSWD:ALL" >> /etc/sudoers
 
 #Setup Jenkins
-mkdir /local/apps/jenkins /local/apps/jenkins/bin /local/apps/jenkins/logs /local/apps/jenkins/home -p
+mkdir /local/apps/jenkins /local/apps/jenkins/tools /local/apps/jenkins/bin /local/apps/jenkins/logs /local/apps/jenkins/home -p
 cd /local/apps/jenkins
-#wget http://mirrors.jenkins.io/war-stable/2.235.2/jenkins.war
-wget https://get.jenkins.io/war/2.263/jenkins.war
+JENKINS_VER=`curl --silent https://get.jenkins.io/war-stable/ |grep -a1 'href="latest' |tail -n1 |awk '{split($2,c,">"); print c[2]}' |sed "s/\/<\/a//g"`
+wget https://get.jenkins.io/war-stable/${JENKINS_VER}/jenkins.war
 
 #Creating start/stop script
 cd bin
@@ -73,8 +65,17 @@ EOF
 
 #setting proper permission and ownership
 chmod 755 /local/apps/jenkins/bin/*
-chown jenkins:jenkins /local/apps/* -R
+chown jenkins:jenkins /local/apps/jenkins -R
 
 #setting env for jenkins user
 echo "cd /local/apps/jenkins" >> /home/jenkins/.bash_profile
 echo "export PATH=/local/apps/jenkins/bin:$PATH" >> /home/jenkins/.bash_profile
+
+#Install maven
+#cd /tmp
+#wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip
+#unzip apache-maven-3.6.3-bin.zip
+#mkdir /local/apps/jenkins/tools
+#mkdir /local/apps/jenkins/tools/maven -p
+#cd apache-maven-3.6.3
+#mv * /local/apps/jenkins/tools/maven
